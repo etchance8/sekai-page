@@ -3,95 +3,505 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>うつくしい世界に生きる</title>
-
+<title>うつくしい世界に生きる ─ いのちおり</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@200;300;400&family=Shippori+Mincho+B1:wght@400;500;600&display=swap');
+
+:root {
+  --bg:        #f4f7f2;
+  --bg2:       #ecf0e8;
+  --surface:   #e6ece0;
+  --surface2:  #dce5d4;
+  --ink:       #1a1e16;
+  --ink-mid:   #404838;
+  --ink-light: #6a7260;
+  --ink-faint: #bec8b4;
+  --gold:      #7a6a1a;
+  --gold-dim:  #8a7a28;
+  --green:     #2a5430;
+  --green-dim: rgba(42,84,48,0.10);
+  --green-mid: #366040;
+  --earth:     #6a4818;
+  --earth-dim: rgba(106,72,24,0.10);
+  --amber:     #786018;
+  --amber-dim: rgba(120,96,24,0.10);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
 body {
-  margin: 0;
-  font-family: "Hiragino Mincho ProN", serif;
-  background: #0f1115;
-  color: #e8e8e8;
-  line-height: 1.9;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Noto Serif JP', serif;
+  font-weight: 300;
+  line-height: 2;
+  overflow-x: hidden;
 }
 
-section {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 80px 24px;
+/* 追加：リンクの基本スタイル */
+.nav-link {
+  text-decoration: none;
+  color: var(--ink-light);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  transition: opacity 0.4s;
+  border-bottom: 1px solid var(--ink-faint);
+  z-index: 10;
 }
+.nav-link:hover { opacity: 0.7; }
 
+.appear {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 1.2s cubic-bezier(.3,0,.2,1), transform 1.2s cubic-bezier(.3,0,.2,1);
+}
+.appear.on { opacity:1; transform:none; }
+.d1 { transition-delay:.12s; }
+.d2 { transition-delay:.26s; }
+.d3 { transition-delay:.40s; }
+
+/* ─── HERO ─── */
 .hero {
-  height: 100vh;
+  position: relative;
+  min-height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
+  padding: 80px 32px 100px;
+  overflow: hidden;
 }
 
-h1 {
-  font-size: 36px;
-  letter-spacing: 0.2em;
-  font-weight: 400;
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('https://images.unsplash.com/photo-1448375240586-882707db888b?w=1600&q=80');
+  background-size: cover;
+  background-position: center 40%;
+  opacity: 0.18;
+  filter: saturate(0.7) brightness(1.15);
 }
 
-p {
-  margin: 24px 0;
-  font-size: 16px;
-  opacity: 0.9;
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    var(--bg) 0%,
+    transparent 20%,
+    transparent 72%,
+    var(--bg) 100%
+  );
 }
 
-.small {
+canvas#c {
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  z-index:1;
+}
+
+.hero-inner { position:relative; z-index:2; }
+
+.hero-en {
   font-size: 14px;
-  opacity: 0.6;
+  letter-spacing: 0.45em;
+  color: var(--ink-mid);
+  margin-bottom: 28px;
+  font-weight: 300;
 }
 
-.line {
-  width: 40px;
-  height: 1px;
-  background: #aaa;
-  margin: 40px auto;
-}
-
-a {
-  color: #aaa;
+/* 修正：ロゴリンク用 */
+.hero-en a {
   text-decoration: none;
-  border-bottom: 1px solid #555;
+  color: inherit;
 }
+
+.hero-title {
+  font-family: 'Shippori Mincho B1', serif;
+  font-size: clamp(34px, 7vw, 64px);
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  color: var(--ink);
+  line-height: 1.3;
+  margin-bottom: 48px;
+}
+
+.hero-vline {
+  width:1px; height:56px;
+  background: linear-gradient(to bottom, var(--gold-dim), transparent);
+  margin: 0 auto 40px;
+}
+
+.hero-poem {
+  font-size: 14px;
+  color: var(--ink-mid);
+  letter-spacing: 0.1em;
+  line-height: 2.9;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.scroll-hint {
+  position:absolute; bottom:36px; left:50%;
+  transform:translateX(-50%);
+  display:flex; flex-direction:column; align-items:center; gap:10px;
+  animation: drift 3.5s ease-in-out infinite;
+  z-index:2;
+}
+@keyframes drift {
+  0%,100%{opacity:.25;transform:translateX(-50%) translateY(0)}
+  50%{opacity:.6;transform:translateX(-50%) translateY(8px)}
+}
+.scroll-hint span { font-size:9px; letter-spacing:.4em; color:var(--ink-light); }
+.scroll-hint i { width:1px; height:44px; background:linear-gradient(to bottom,var(--ink-light),transparent); }
+
+.horizon {
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold-dim) 20%, var(--gold-dim) 80%, transparent);
+  opacity: 0.25;
+}
+
+/* ─── SECTIONS ─── */
+.sect {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 96px 32px;
+  border-bottom: 1px solid var(--ink-faint);
+}
+.sect:last-of-type { border-bottom:none; }
+
+.sect-label {
+  font-size: 9px;
+  letter-spacing: 0.55em;
+  color: var(--gold-dim);
+  margin-bottom: 48px;
+  display:flex; align-items:center; gap:16px;
+}
+.sect-label::after { content:''; flex:1; height:1px; background:var(--ink-faint); }
+
+.qblock {
+  border-left: 1px solid var(--gold-dim);
+  padding: 26px 30px;
+  background: var(--surface);
+  border-radius: 0 6px 6px 0;
+  margin-bottom: 16px;
+}
+.qlabel { font-size:9px; letter-spacing:.4em; color:var(--gold-dim); margin-bottom:12px; }
+.qblock p { font-size:14px; color:var(--ink-mid); line-height:2.3; letter-spacing:.04em; }
+
+.map-frame {
+  border:1px solid var(--ink-faint);
+  border-radius:14px;
+  background:#edf2e8;
+  padding:32px 20px;
+  overflow-x:auto;
+}
+.map-frame svg { width:100%; height:auto; display:block; min-width:540px; }
+
+.pillars { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:14px; }
+@media(max-width:580px){.pillars{grid-template-columns:1fr;}}
+
+.pillar {
+  padding:28px 20px; border-radius:10px;
+  border:1px solid transparent;
+  transition:border-color .4s, background .4s;
+}
+.pillar.kansei { background:var(--green-dim); border-color:rgba(42,84,48,.25); }
+.pillar.shintai { background:var(--earth-dim); border-color:rgba(106,72,24,.25); }
+.pillar.mind    { background:var(--amber-dim); border-color:rgba(120,96,24,.25); }
+.pillar:hover   { border-color:rgba(138,122,40,.35); }
+
+.pillar-name {
+  font-family:'Shippori Mincho B1',serif;
+  font-size:18px; font-weight:500; letter-spacing:.2em; margin-bottom:14px;
+}
+.kansei .pillar-name { color:var(--green); }
+.shintai .pillar-name { color:var(--earth); }
+.mind    .pillar-name { color:var(--amber); }
+
+.pillar ul { list-style:none; font-size:12px; color:var(--ink-light); line-height:2.1; }
+.pillar ul li::before { content:'─　'; color:var(--ink-faint); }
+.pillar-note { font-size:11.5px; color:var(--ink-light); line-height:1.9;
+  margin-top:14px; padding-top:14px; border-top:1px solid var(--ink-faint); }
+
+.two-col { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+@media(max-width:480px){.two-col{grid-template-columns:1fr;}}
+
+.icard { background:var(--surface); border:1px solid var(--ink-faint); border-radius:8px; padding:20px 22px; }
+.icard-title { font-size:12px; letter-spacing:.12em; color:var(--ink-mid); margin-bottom:8px; }
+.icard-desc  { font-size:12px; color:var(--ink-light); line-height:1.9; }
+
+.worlds { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+@media(max-width:480px){.worlds{grid-template-columns:1fr;}}
+
+.world { padding:26px 22px; border-radius:10px; }
+.world.invisible { background:var(--green-dim); border:1px solid rgba(42,84,48,.28); }
+.world.visible   { background:var(--surface); border:1px solid var(--ink-faint); }
+
+.world-title {
+  font-family:'Shippori Mincho B1',serif;
+  font-size:14px; font-weight:500; letter-spacing:.15em; margin-bottom:14px;
+}
+.invisible .world-title { color:var(--green); }
+.visible   .world-title { color:var(--ink-mid); }
+
+.world ul { list-style:none; font-size:12px; line-height:2.1; }
+.invisible ul { color:var(--green-mid); }
+.visible ul   { color:var(--ink-light); }
+.world ul li::before { content:'・'; opacity:.4; }
+
+.closing {
+  text-align:center; padding:130px 32px 100px;
+  position:relative; overflow:hidden;
+}
+.closing-bg {
+  position:absolute; inset:0; pointer-events:none;
+  display:flex; align-items:center; justify-content:center;
+}
+.closing-title {
+  font-family:'Shippori Mincho B1',serif;
+  font-size:clamp(28px,5vw,48px); font-weight:400; letter-spacing:.35em;
+  color:var(--ink); position:relative; z-index:1; margin-bottom:20px;
+}
+.closing-sub { font-size:11px; letter-spacing:.38em; color:var(--gold-dim); position:relative; z-index:1; }
+
+/* 追加：下部リンク用 */
+.bottom-nav { margin-top: 40px; position: relative; z-index: 5; }
 </style>
 </head>
-
 <body>
 
 <section class="hero">
-  <h1>うつくしい世界に生きる</h1>
+  <a href="https://www.kokorobi.com/" class="nav-link" style="position:absolute; top:32px; right:32px;">Home</a>
+
+  <canvas id="c"></canvas>
+  <div class="hero-inner">
+    <p class="hero-en appear"><a href="https://www.kokorobi.com/">いのちおり</a></p>
+    <h1 class="hero-title appear d1">うつくしい世界に生きる</h1>
+    <div class="hero-vline appear d2"></div>
+    <p class="hero-poem appear d3">
+      名前のないものと、名前のあるものの。<br>
+      その境界に佇むとき、<br>
+      見えなかった構造が、<br>
+      静かに姿を現す。
+    </p>
+  </div>
+  <div class="scroll-hint"><span>scroll</span><i></i></div>
 </section>
 
-<section>
-  <p>
-    変えるより、還る。
-  </p>
+<div class="horizon"></div>
 
-  <p>
-    思考でどうにかしようとしても動かなかったものが、<br>
-    身体や感覚に触れた瞬間、ほどけることがある。
-  </p>
-
-  <p>
-    意識・感性・身体のあいだをひらき、<br>
-    世界の見え方が変わる地点を扱っています。
-  </p>
-
-  <div class="line"></div>
-
-  <p class="small">
-    このページは、入口としてひらかれています。<br>
-    必要な方へ。
-  </p>
-
-  <p>
-    <a href="#">→ 詳細を見る（準備中）</a>
-  </p>
+<section class="sect">
+  <div class="sect-label appear">活動の原理</div>
+  <div class="qblock appear">
+    <div class="qlabel">目的と作用</div>
+    <p>境界・接点の場に関わることで、情報空間における変容を起こし、縁起的に物理空間・世界を変容させる。すべては見えない領域でつながっており、その見えない層への働きかけが、現実の変容をもたらす。</p>
+  </div>
 </section>
 
+<section class="sect">
+  <div class="sect-label appear">構造地図</div>
+  <div class="map-frame appear">
+    <svg viewBox="0 0 680 520" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </marker>
+      </defs>
+      <rect x="80" y="20" width="520" height="58" rx="12" fill="rgba(42,84,48,0.10)" stroke="rgba(42,84,48,0.38)" stroke-width="0.8"/>
+      <text x="340" y="42" text-anchor="middle" font-size="14" font-weight="500" fill="#1a3418" font-family="'Noto Serif JP',serif" letter-spacing="2">名前のない世界</text>
+      <text x="340" y="62" text-anchor="middle" font-size="10.5" fill="#2a5430" font-family="'Noto Serif JP',serif">みなもと・神魂・神秘・古層の神的なもの・自然の見えない側面</text>
+      <rect x="40" y="96" width="600" height="188" rx="14" fill="none" stroke="#bec8b4" stroke-width="1" stroke-dasharray="5 3"/>
+      <text x="340" y="116" text-anchor="middle" font-size="13" font-weight="500" fill="#404838" font-family="'Noto Serif JP',serif" letter-spacing="2">境界・接点の場</text>
+      <text x="340" y="134" text-anchor="middle" font-size="10.5" fill="#6a7260" font-family="'Noto Serif JP',serif">うつくしい世界に生きる　／　佇まいの美学</text>
+      <rect x="56" y="148" width="172" height="116" rx="8" fill="rgba(42,84,48,0.08)" stroke="rgba(42,84,48,0.32)" stroke-width="0.8"/>
+      <text x="142" y="170" text-anchor="middle" font-size="14" font-weight="500" fill="#2a5430" font-family="'Noto Serif JP',serif" letter-spacing="2">感性</text>
+      <text x="142" y="190" text-anchor="middle" font-size="10.5" fill="#366040" font-family="'Noto Serif JP',serif">降りてくる情報の具現化</text>
+      <text x="142" y="208" text-anchor="middle" font-size="10.5" fill="#366040" font-family="'Noto Serif JP',serif">詩・言葉・アート</text>
+      <text x="142" y="226" text-anchor="middle" font-size="10.5" fill="#366040" font-family="'Noto Serif JP',serif">放つ／橋渡しする</text>
+      <text x="142" y="244" text-anchor="middle" font-size="10.5" fill="#366040" font-family="'Noto Serif JP',serif">歌占・個別メッセージ</text>
+      <rect x="254" y="148" width="172" height="116" rx="8" fill="rgba(106,72,24,0.08)" stroke="rgba(106,72,24,0.32)" stroke-width="0.8"/>
+      <text x="340" y="170" text-anchor="middle" font-size="14" font-weight="500" fill="#6a4818" font-family="'Noto Serif JP',serif" letter-spacing="2">身体</text>
+      <text x="340" y="190" text-anchor="middle" font-size="10.5" fill="#7a5020" font-family="'Noto Serif JP',serif">往還を身体で生きる</text>
+      <text x="340" y="208" text-anchor="middle" font-size="10.5" fill="#7a5020" font-family="'Noto Serif JP',serif">かぐらコア・メソッド</text>
+      <text x="340" y="226" text-anchor="middle" font-size="10.5" fill="#7a5020" font-family="'Noto Serif JP',serif">ゆらぎ場（醸成中）</text>
+      <text x="340" y="244" text-anchor="middle" font-size="10.5" fill="#7a5020" font-family="'Noto Serif JP',serif">入口を示す／見せる</text>
+      <rect x="452" y="148" width="172" height="134" rx="8" fill="rgba(120,96,24,0.08)" stroke="rgba(120,96,24,0.32)" stroke-width="0.8"/>
+      <text x="538" y="168" text-anchor="middle" font-size="14" font-weight="500" fill="#786018" font-family="'Noto Serif JP',serif" letter-spacing="2">マインド</text>
+      <text x="538" y="186" text-anchor="middle" font-size="10.5" fill="#8a7020" font-family="'Noto Serif JP',serif">還れることを思い出させる</text>
+      <text x="538" y="203" text-anchor="middle" font-size="10.5" fill="#8a7020" font-family="'Noto Serif JP',serif">（現状の外へ）</text>
+      <text x="538" y="220" text-anchor="middle" font-size="10.5" fill="#8a7020" font-family="'Noto Serif JP',serif">コーチング</text>
+      <text x="538" y="237" text-anchor="middle" font-size="10.5" fill="#8a7020" font-family="'Noto Serif JP',serif">情報の書き換え（非言語）</text>
+      <text x="538" y="254" text-anchor="middle" font-size="10.5" fill="#8a7020" font-family="'Noto Serif JP',serif">理解を開く（説明）</text>
+      <line x1="142" y1="266" x2="142" y2="300" stroke="#bec8b4" stroke-width="1" marker-end="url(#arr)"/>
+      <line x1="340" y1="266" x2="340" y2="300" stroke="#bec8b4" stroke-width="1" marker-end="url(#arr)"/>
+      <line x1="538" y1="284" x2="538" y2="300" stroke="#bec8b4" stroke-width="1" marker-end="url(#arr)"/>
+      <rect x="40" y="302" width="600" height="38" rx="8" fill="none" stroke="#bec8b4" stroke-width="0.5" stroke-dasharray="3 3"/>
+      <text x="340" y="325" text-anchor="middle" font-size="10.5" fill="#6a7260" font-family="'Noto Serif JP',serif">発信・作品　──　世界の断片に輪郭を与え、世界に配置する行為</text>
+      <line x1="340" y1="342" x2="340" y2="374" stroke="#bec8b4" stroke-width="1" marker-end="url(#arr)"/>
+      <rect x="80" y="376" width="520" height="58" rx="12" fill="rgba(106,72,24,0.08)" stroke="rgba(106,72,24,0.28)" stroke-width="0.8"/>
+      <text x="340" y="398" text-anchor="middle" font-size="14" font-weight="500" fill="#404838" font-family="'Noto Serif JP',serif" letter-spacing="2">名前のある世界</text>
+      <text x="340" y="418" text-anchor="middle" font-size="10.5" fill="#6a7260" font-family="'Noto Serif JP',serif">人・命・日常　みなもとへの回路を取り戻す</text>
+      <path d="M598 404 Q644 456 598 498 Q480 518 340 516 Q200 514 82 498 Q36 456 82 404" fill="none" stroke="#bec8b4" stroke-width="0.8" stroke-dasharray="4 4" marker-end="url(#arr)"/>
+      <text x="650" y="456" text-anchor="start" font-size="10" fill="#9aaa90" font-family="'Noto Serif JP',serif">世界の</text>
+      <text x="650" y="472" text-anchor="start" font-size="10" fill="#9aaa90" font-family="'Noto Serif JP',serif">変容</text>
+      <path d="M82 378 Q44 328 52 216 Q54 168 70 148" fill="none" stroke="#bec8b4" stroke-width="0.8" stroke-dasharray="4 4" marker-end="url(#arr)"/>
+    </svg>
+  </div>
+</section>
+
+<section class="sect">
+  <div class="sect-label appear">3つの柱</div>
+  <div class="pillars">
+    <div class="pillar kansei appear">
+      <div class="pillar-name">感性</div>
+      <ul>
+        <li>詩・歌</li>
+        <li>アート・クリエイティブ</li>
+        <li>歌占</li>
+        <li>個別メッセージ</li>
+      </ul>
+      <div class="pillar-note">降りてくる情報の具現化。放つか、橋渡しするかで様式が分かれる。</div>
+    </div>
+    <div class="pillar shintai appear d1">
+      <div class="pillar-name">身体</div>
+      <ul>
+        <li>かぐらコア・メソッド</li>
+        <li>ゆらぎ場（醸成中）</li>
+        <li>ヒーリング</li>
+        <li>気を扱う</li>
+      </ul>
+      <div class="pillar-note">意識の前段階に気づく。フィジカル重視のありよう。</div>
+    </div>
+    <div class="pillar mind appear d2">
+      <div class="pillar-name">マインド</div>
+      <ul>
+        <li>苫米地式コーチング</li>
+        <li>マインドベーシック</li>
+        <li>現実創造のセミナー</li>
+      </ul>
+      <div class="pillar-note">非言語重視のセッションと、説明を入口にする発信の二層がある。</div>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="icard appear">
+      <div class="icard-title">深い層（すべての柱に共通）</div>
+      <div class="icard-desc">気配・余白・非言語。言葉になる手前のものを、そのままの質感で置く。</div>
+    </div>
+    <div class="icard appear d1">
+      <div class="icard-title">入口の層（すべての柱に共通）</div>
+      <div class="icard-desc">説明・案内・読み解き。断定せず、余地を残す。</div>
+    </div>
+  </div>
+</section>
+
+<section class="sect">
+  <div class="sect-label appear">二つの世界</div>
+  <div class="worlds">
+    <div class="world invisible appear">
+      <div class="world-title">名前のない世界</div>
+      <ul>
+        <li>みなもと・神魂・神秘</li>
+        <li>古層の神的なもの</li>
+        <li>民俗・宿神・神楽の根</li>
+        <li>自然の見えない側面</li>
+        <li>情報空間・ゆらぎ場（源泉）</li>
+      </ul>
+    </div>
+    <div class="world visible appear d1">
+      <div class="world-title">名前のある世界</div>
+      <ul>
+        <li>人・命・日常</li>
+        <li>身体・感情・感覚</li>
+        <li>自然の見える側面</li>
+        <li>言語・形・作品</li>
+        <li>物理空間・現実</li>
+      </ul>
+    </div>
+  </div>
+  <div class="qblock appear">
+    <div class="qlabel">境界・接点について</div>
+    <p>この二つの世界の境界・接点が、関わりたい場。感性・身体・マインドはすべて、その接点への入口。自然は両方の世界にまたがって存在し、境界の場そのものでもある。</p>
+  </div>
+</section>
+
+<section class="closing">
+  <div class="closing-bg">
+    <svg viewBox="0 0 500 500" width="500" height="500" style="opacity:.06">
+      <circle cx="250" cy="250" r="200" fill="none" stroke="#8a7a28" stroke-width="0.6"/>
+      <circle cx="250" cy="250" r="150" fill="none" stroke="#2a5430" stroke-width="0.6"/>
+      <circle cx="250" cy="250" r="100" fill="none" stroke="#6a4818" stroke-width="0.6"/>
+      <circle cx="250" cy="250" r="56"  fill="none" stroke="#8a7a28" stroke-width="0.6"/>
+    </svg>
+  </div>
+  <p class="closing-title appear">いのちおり</p>
+  <p class="closing-sub appear d1">うつくしい世界に生きる</p>
+
+  <div class="bottom-nav">
+    <a href="https://www.kokorobi.com/" class="nav-link">Home</a>
+  </div>
+</section>
+
+<script>
+const io = new IntersectionObserver(
+  es => es.forEach(e => { if(e.isIntersecting) e.target.classList.add('on'); }),
+  { threshold: 0.1 }
+);
+document.querySelectorAll('.appear').forEach(el => io.observe(el));
+
+const cv = document.getElementById('c');
+const cx = cv.getContext('2d');
+let W, H, pts=[];
+
+function resize(){
+  W = cv.width = cv.offsetWidth;
+  H = cv.height = cv.offsetHeight;
+  pts = Array.from({length:40}, () => ({
+    x: Math.random()*W, y: Math.random()*H,
+    vx:(Math.random()-.5)*.10, vy:(Math.random()-.5)*.08,
+    r: Math.random()*1.0+.2,
+    a: Math.random()*.22+.05,
+  }));
+}
+
+function drawTerrain(t){
+  [
+    { y:.60, amp:30, freq:.0016, speed:.00010, color:'rgba(42,84,48,0.06)' },
+    { y:.70, amp:40, freq:.0022, speed:.00016, color:'rgba(106,72,24,0.05)' },
+    { y:.80, amp:24, freq:.0030, speed:.00007, color:'rgba(26,30,22,0.04)' },
+  ].forEach(l => {
+    cx.beginPath();
+    for(let x=0; x<=W; x+=6){
+      const y = H*l.y + Math.sin(x*l.freq + t*l.speed)*l.amp
+                      + Math.sin(x*l.freq*2.3 + t*l.speed*1.6)*l.amp*.35;
+      x===0 ? cx.moveTo(x,y) : cx.lineTo(x,y);
+    }
+    cx.lineTo(W,H); cx.lineTo(0,H); cx.closePath();
+    cx.fillStyle = l.color; cx.fill();
+  });
+}
+
+function frame(t){
+  cx.clearRect(0,0,W,H);
+  drawTerrain(t);
+  pts.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+    if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+    const f = .6+Math.sin(t*.003+p.x)*.4;
+    cx.beginPath(); cx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    cx.fillStyle=`rgba(60,100,50,${p.a*f*.25})`; cx.fill();
+  });
+  requestAnimationFrame(frame);
+}
+
+resize();
+window.addEventListener('resize',resize);
+requestAnimationFrame(frame);
+</script>
 </body>
 </html>
